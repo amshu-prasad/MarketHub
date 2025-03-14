@@ -13,7 +13,7 @@ const Navbar = () => {
   return (
     <nav className="bg-primary shadow-md sticky top-0 z-50 px-8 py-4 flex justify-between items-center">
       <div className="text-white">
-        <Link to="/" className="text-2xl font-bold">MarketHub</Link>
+        <Link to="/" className="text-2xl font-bold">MartX</Link>
       </div>
       
       <button 

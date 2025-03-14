@@ -65,10 +65,10 @@ This project uses Tailwind CSS for styling. The main configuration can be found 
 - `npm run build` - Builds the app for production
 - `npm run eject` - Ejects from Create React App
 
-## Contributing
+<!-- ## Contributing
 
 Contributions are welcome! Please feel free to submit a Pull Request.
 
 ## License
 
-This project is licensed under the MIT License - see the LICENSE file for details.
+This project is licensed under the MIT License - see the LICENSE file for details. -->
