@@ -1,10 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { useCart } from '../../context/CartContext';
+import Link from 'next/link';
+
 type Product = {
+  id: string;
   product_name: string;
   category: string;
   price: number;
   image_url: string; // Corrected the image field
+  brand: string;
+  color: string;
 };
 
 const Products = () => {
@@ -15,28 +20,26 @@ const Products = () => {
   const { addToCart } = useCart();
 
   useEffect(() => {
-    const fetchProducts = async () => {
-      try {
-        const res = await fetch("http://127.0.0.1:8000/api/v2/pages/19/");
-        // const res = await fetch("http://127.0.0.1:8000/api/v2/pages/?type=products.ProductsPage");
-        const data = await res.json();
-
-        console.log("API Response:", data); // Debug API response
-
-        // If related_products exist in the response, update state
-        if (data.related_products) {
-          setProducts(data.related_products);
-        } else {
-          console.error("No related_products found in API response.");
-        }
-      } catch (error) {
-        console.error("Error fetching products:", error);
-      }
-    };
-
     fetchProducts();
   }, []);
 
+  const fetchProducts = async () => {
+    try {
+      const response = await fetch("http://127.0.0.1:8000/api/v2/pages/19/");
+      const data = await response.json();
+
+      console.log("API Response:", data); // Debug API response
+
+      // If related_products exist in the response, update state
+      if (data.related_products) {
+        setProducts(data.related_products);
+      } else {
+        console.error("No related_products found in API response.");
+      }
+    } catch (error) {
+      console.error("Error fetching products:", error);
+    }
+  };
 
   const filterProducts = () => {
     return products.filter(product => {
@@ -91,32 +94,39 @@ const Products = () => {
 
       {/* Products Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
-        {filterProducts().map((product, index) => (
-          <div key={index} className="bg-white rounded-lg p-4 shadow-md hover:-translate-y-1 hover:shadow-lg transition-all flex flex-col">
-            <img
-              src={product.image_url} // Corrected image field reference
-              alt={product.product_name}
-              className="w-full h-48 object-cover rounded-md mb-4"
-            />
-            <h3 className="text-xl text-primary mb-2">{product.product_name}</h3>
-            <p className="text-xl font-bold text-secondary mb-4">${product.price}</p>
 
-            <div className="mt-auto flex gap-2 flex-wrap">
-              {/* <Link href={`/product/${index}`} passHref>
-  <span className="flex-1 py-3 px-4 bg-primary text-white rounded hover:bg-primary/90 transition-colors text-center cursor-pointer">
-    View Details
-  </span>
-</Link> */}
+        {products.length > 0 ? (
+          products.map((product, index) => (
+            <div key={index} className="bg-white rounded-lg p-4 shadow-md hover:-translate-y-1 hover:shadow-lg transition-all flex flex-col">
+              <img
+                src={product.image_url ? `http://127.0.0.1:8000${product.image_url}` : "/fallback-image.jpg"}
+                alt={product.product_name || "Product Image"}
+                className="w-full h-48 object-cover rounded-md mb-4"
+              />
 
-              <button
-                onClick={() => addToCart(product)}
-                className="flex-1 py-3 px-4 bg-secondary text-white rounded hover:bg-secondary/90 transition-colors"
-              >
-                Add to Cart
-              </button>
+              <h3 className="text-xl text-primary mb-2">{product.product_name} | {product.brand}</h3>
+              <h3 className="text-xl text-primary mb-2">{product.color}</h3>
+              <p className="text-xl font-bold text-secondary mb-4">${product.price}</p>
+
+              <div className="mt-auto flex gap-2">
+                <a href={`/product/${product.id}`} className="flex-1">
+                  <span className="block py-2 bg-primary text-white rounded hover:bg-primary/90 transition-colors text-center cursor-pointer">
+                    View Details
+                  </span>
+                </a>
+                <button
+                  onClick={() => addToCart(product)}
+                  className="flex-1 py-2 bg-secondary text-white rounded hover:bg-secondary/90 transition-colors text-center"
+                >
+                  Add to Cart
+                </button>
+              </div>
+
             </div>
-          </div>
-        ))}
+          ))
+        ) : (
+          <p className="text-gray-500">No products available</p>
+        )}
       </div>
     </div>
   );
